@@ -2,6 +2,7 @@ package ru.dunaf.planner.utils.webclient;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import ru.dunaf.planner.entity.User;
 
 @Component
@@ -28,6 +29,17 @@ public class UserWebClientBuilder {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public Flux<User> userExistsAsync(Long userId) {
+
+        Flux<User> fluxUser = WebClient.create(baseUrl)//создать URL
+                .post()//указать тип поиска
+                .uri("id")//добавить URI, которая добавляется к baseUrl для запроса
+                .bodyValue(userId)//добавить в запрос
+                .retrieve()//вызывает микросервис
+                .bodyToFlux(User.class);
+        return fluxUser;
     }
 }
 
